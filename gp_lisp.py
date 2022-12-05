@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-"""
+'''
 From data (input-output pairings),
 and a set of operators and operands as the only starting point,
 write a program that will evolve programmatic solutions,
@@ -17,7 +17,7 @@ with a couple restrictions:
 # DO NOT MODIFY >>>>
 Do not edit the sections between these marks below.
 # <<<< DO NOT MODIFY
-"""
+'''
 
 # %%
 import random
