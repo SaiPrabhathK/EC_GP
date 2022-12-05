@@ -37,7 +37,10 @@ while counter < 10:
     evaluate_individual(population[0], test)
     scores.append(population[0]["fitness"])
 
-grade = 100 - sum(scores) / len(scores)
+mean_score = sum(scores) / len(scores)
+grade = 100 - mean_score
 print(f"Your grade is {grade}")
 with open("results.txt", mode="w") as fhand:
     fhand.write(str(round(grade)))
+with open("mean_score.txt", mode="w") as fhand:
+    fhand.write(str(mean_score))

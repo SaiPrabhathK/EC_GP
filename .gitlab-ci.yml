@@ -10,4 +10,5 @@ generaltester:
     when: always
     paths:
       - results.txt
+      - mean_score.txt
     expire_in: 1 month
