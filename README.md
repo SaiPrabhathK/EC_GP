@@ -31,6 +31,13 @@ but you do not have to.
 The only constraint is that you use a custom EC,
 that you write yourself.
 
+## Grading
+WARNING: the grade you see on git-classes may not be your actual grade.
+If not enough people do well,
+then I may normalize to the best score, 
+such that the best student performance get's 100,
+and everyone else whose program actually completes get's an interpolated score from there.
+
 ## Mutation and recombination
 You need to write GP-friendly recombination and mutation operators.
 This is a substantial task!
