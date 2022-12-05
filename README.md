@@ -3,13 +3,13 @@ Genetic Programming (GP)
 
 ## Background reading:
 If you want a review on tree traversals, see my data structures page:
-https://www.cnsr.dev/index_files/Classes/DataStructures/Content.html
+* https://www.cnsr.dev/index_files/Classes/DataStructures/Content.html
 
 For GP background and reading, see:
-https://www.cnsr.dev/index_files/Classes/EvolutionaryComputation/Content/06-PopularVariants.html#genetic-programming-1
-https://www.cnsr.dev/index_files/Classes/EvolutionaryComputation/Content/18-GeneticProgramming.html
-https://www.cnsr.dev/index_files/Classes/EvolutionaryComputation/Content/06-PopularVariants/GP_book1.pdf
-https://www.cnsr.dev/index_files/Classes/EvolutionaryComputation/Content/06-PopularVariants/evolvedtowin.pdf
+* https://www.cnsr.dev/index_files/Classes/EvolutionaryComputation/Content/06-PopularVariants.html#genetic-programming-1
+* https://www.cnsr.dev/index_files/Classes/EvolutionaryComputation/Content/18-GeneticProgramming.html
+* https://www.cnsr.dev/index_files/Classes/EvolutionaryComputation/Content/06-PopularVariants/GP_book1.pdf
+* https://www.cnsr.dev/index_files/Classes/EvolutionaryComputation/Content/06-PopularVariants/evolvedtowin.pdf
 
 ## Task
 Evolve numeric programs that take one integer input and produce one float output.
