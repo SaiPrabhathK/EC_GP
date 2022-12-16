@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-'''
+"""
 From data (input-output pairings),
 and a set of operators and operands as the only starting point,
 write a program that will evolve programmatic solutions,
@@ -17,7 +17,7 @@ with a couple restrictions:
 # DO NOT MODIFY >>>>
 Do not edit the sections between these marks below.
 # <<<< DO NOT MODIFY
-'''
+"""
 
 # %%
 import random
@@ -244,7 +244,15 @@ def initialize_pop(pop_size: int) -> Population:
     Calls:          random.choice-1, string.ascii_letters-1, initialize_individual-n
     Example doctest:
     """
-    pass
+    population = []
+    for i in range(pop_size):
+        rand_code = gen_rand_prefix_code(depth_limit=4)
+        rand_code = put_an_x_in_it(rand_code)
+        new_individual = initialize_individual(rand_code, 0)
+        # print(new_individual)
+        population.append(new_individual)
+    # print(population)
+    return population
 
 
 def recombine_pair(parent1: Individual, parent2: Individual) -> Population:
@@ -258,7 +266,70 @@ def recombine_pair(parent1: Individual, parent2: Individual) -> Population:
     Calls:          Basic python, random.choice-1, initialize_individual-2
     Example doctest:
     """
-    pass
+    recombined_child_1 = copy.deepcopy(parent1["genome"])
+    cnt_child_1 = countNodes(recombined_child_1)
+    selected_position_1 = random.choice(range(1, min(2, cnt_child_1) + 1))
+    subtree_child_1 = getSubTree(recombined_child_1, selected_position_1, 1)
+
+    recombined_child_2 = copy.deepcopy(parent2["genome"])
+    cnt_child_2 = countNodes(recombined_child_2)
+    selected_position_2 = random.choice(range(1, min(2, cnt_child_2) + 1))
+    subtree_child_2 = getSubTree(recombined_child_2, selected_position_2, 1)
+
+    putSubTree(recombined_child_1, subtree_child_2, selected_position_1, 1)
+    putSubTree(recombined_child_2, subtree_child_1, selected_position_2, 1)
+
+    if "x" not in parse_tree_return(recombined_child_1):
+        recombined_child_1 = parse_expression(
+            put_an_x_in_it(parse_tree_return(recombined_child_1))
+        )
+
+    if "x" not in parse_tree_return(recombined_child_2):
+        recombined_child_2 = parse_expression(
+            put_an_x_in_it(parse_tree_return(recombined_child_2))
+        )
+
+    return [
+        {"genome": recombined_child_1, "fitness": 0},
+        {"genome": recombined_child_2, "fitness": 0},
+    ]
+
+
+def countNodes(node: Node) -> int:
+    if node.left == None and node.right == None:
+        return 1
+    totalNodes: int = 0
+    if node.left is not None:
+        totalNodes += countNodes(node.left)
+    if node.right is not None:
+        totalNodes += countNodes(node.right)
+    return 1 + totalNodes
+
+
+def getSubTree(node: Node, pos: int, curr_pos: int) -> Node:
+    if curr_pos == pos:
+        return copy.deepcopy(node)
+    curr_pos += 1
+    if node.left is not None:
+        return getSubTree(node.left, pos, curr_pos)
+    curr_pos += 1
+    if node.right is not None:
+        return getSubTree(node.right, pos, curr_pos)
+    return node
+
+
+def putSubTree(node: Node, subtreenode: Node, pos: int, curr_pos: int) -> None:
+    if curr_pos == pos:
+        node.data = subtreenode.data
+        node.left = subtreenode.left
+        node.right = subtreenode.right
+        return
+    curr_pos += 1
+    if node.left is not None:
+        getSubTree(node.left, pos, curr_pos)
+    curr_pos += 1
+    if node.right is not None:
+        getSubTree(node.right, pos, curr_pos)
 
 
 def recombine_group(parents: Population, recombine_rate: float) -> Population:
@@ -273,7 +344,14 @@ def recombine_group(parents: Population, recombine_rate: float) -> Population:
     Modifies:       Nothing
     Calls:          Basic python, random.random~n/2, recombine pair-n
     """
-    pass
+    recombined_population = []
+    for i in range(0, len(parents) - 1, 2):
+        if recombine_rate > random.random():
+            recombined_population.extend(recombine_pair(parents[i], parents[i + 1]))
+        else:
+            recombined_population.append(parents[i])
+            recombined_population.append(parents[i + 1])
+    return recombined_population
 
 
 def mutate_individual(parent: Individual, mutate_rate: float) -> Individual:
@@ -287,7 +365,21 @@ def mutate_individual(parent: Individual, mutate_rate: float) -> Individual:
     Calls:          Basic python, random,choice-1,
     Example doctest:
     """
-    pass
+    mutatedChild = copy.deepcopy(parent["genome"])
+    if random.random() < mutate_rate:
+        cnt_child = countNodes(mutatedChild)
+        selected_position = random.choice(range(1, min(2, cnt_child) + 1))
+        selected_subtree = getSubTree(mutatedChild, selected_position, 1)
+        subtree_node_count = countNodes(selected_subtree)
+        new_subtree_child = parse_expression(
+            gen_rand_prefix_code(depth_limit=round(math.log2(subtree_node_count)))
+        )
+        putSubTree(mutatedChild, new_subtree_child, selected_position, 1)
+        if "x" not in parse_tree_return(mutatedChild):
+            mutatedChild = parse_expression(
+                put_an_x_in_it(parse_tree_return(mutatedChild))
+            )
+    return {"genome": mutatedChild, "fitness": 0}
 
 
 def mutate_group(children: Population, mutate_rate: float) -> Population:
@@ -301,7 +393,10 @@ def mutate_group(children: Population, mutate_rate: float) -> Population:
     Calls:          Basic python, mutate_individual-n
     Example doctest:
     """
-    pass
+    mutated_population = []
+    for x in children:
+        mutated_population.append(mutate_individual(x, mutate_rate))
+    return mutated_population
 
 
 # DO NOT MODIFY >>>>
@@ -359,7 +454,8 @@ def evaluate_group(individuals: Population, io_data: IOdata) -> None:
     Calls:          Basic python, evaluate_individual-n
     Example doctest:
     """
-    pass
+    for x in individuals:
+        evaluate_individual(x, io_data)
 
 
 def rank_group(individuals: Population) -> None:
@@ -373,7 +469,12 @@ def rank_group(individuals: Population) -> None:
     Calls:          Basic python only
     Example doctest:
     """
-    pass
+    ranked_individuals = []
+    ranked_individuals = sorted(
+        individuals, key=lambda individual: individual["fitness"], reverse=False
+    )
+    for x in range(len(ranked_individuals)):
+        individuals[x] = ranked_individuals[x]
 
 
 def parent_select(individuals: Population, number: int) -> Population:
@@ -387,7 +488,17 @@ def parent_select(individuals: Population, number: int) -> Population:
     Calls:          Basic python, random.choices-1
     Example doctest:
     """
-    pass
+    fitness_list = []
+    selected_individuals = []
+    for x in individuals:
+        if math.isinf(x["fitness"]):
+            continue
+        fitness_list.append(x["fitness"])
+        selected_individuals.append(x)
+    selected_parents = random.choices(
+        selected_individuals, weights=fitness_list, k=number
+    )
+    return selected_parents
 
 
 def survivor_select(individuals: Population, pop_size: int) -> Population:
@@ -401,10 +512,10 @@ def survivor_select(individuals: Population, pop_size: int) -> Population:
     Calls:          Basic python only
     Example doctest:
     """
-    pass
+    return individuals[:pop_size]
 
 
-def evolve(io_data: IOdata, pop_size: int = 100) -> Population:
+def evolve(io_data: IOdata, pop_size: int = 200) -> Population:
     """
     Purpose:        A whole EC run, main driver
     Parameters:     The evolved population of solutions
@@ -420,7 +531,31 @@ def evolve(io_data: IOdata, pop_size: int = 100) -> Population:
     # Type 's' to 'step' deeper
     # Type 'n' to 'next' over
     # Type 'f' or 'r' to finish/return a function call and go back to caller
-    pass
+    population = initialize_pop(pop_size=pop_size)
+    evaluate_group(individuals=population, io_data=io_data)
+    rank_group(individuals=population)
+    best_fitness = population[0]["fitness"]
+    counter = 0
+    while counter < 1000:
+        counter += 1
+        parents = parent_select(individuals=population, number=90)
+        children = recombine_group(parents=parents, recombine_rate=0.9)
+        mutants = mutate_group(children=children, mutate_rate=0.03)
+        evaluate_group(individuals=mutants, io_data=io_data)
+        everyone = population + mutants
+        rank_group(individuals=everyone)
+        population = survivor_select(individuals=everyone, pop_size=pop_size)
+        if best_fitness != population[0]["fitness"]:
+            best_fitness = population[0]["fitness"]
+            print(
+                "Iteration number",
+                counter,
+                "with best individual",
+                parse_tree_return(population[0]["genome"]),
+                "fitness",
+                population[0]["fitness"],
+            )
+    return population
 
 
 # Seed for base grade.
@@ -470,3 +605,5 @@ if __name__ == "__main__":
     print("And it's fitness:")
     print(population[0]["fitness"])
 # <<<< DO NOT MODIFY
+
+# %%
