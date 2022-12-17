@@ -495,10 +495,14 @@ def parent_select(individuals: Population, number: int) -> Population:
             continue
         fitness_list.append(x["fitness"])
         selected_individuals.append(x)
-    selected_parents = selected_individuals[:number]
-    #random.choices(
-     #   selected_individuals, weights=fitness_list, k=number
-    #)
+    total_fitness = sum(fitness_list)
+    weights_list = []
+    for each_fitness in fitness_list:
+        new_weight = (1 - (each_fitness/total_fitness))
+        weights_list.append(new_weight)
+    selected_parents = random.choices(
+       selected_individuals, weights=weights_list, k=number
+    )
     return selected_parents
 
 
@@ -537,16 +541,18 @@ def evolve(io_data: IOdata, pop_size: int = 200) -> Population:
     rank_group(individuals=population)
     best_fitness = population[0]["fitness"]
     counter = 0
-    while counter < 10000:
+    counter_since_last_best = 0
+    while counter < 25000:
         counter += 1
-        parents = parent_select(individuals=population, number=80)
-        children = recombine_group(parents=parents, recombine_rate=0.8)
+        parents = parent_select(individuals=population, number=90)
+        children = recombine_group(parents=parents, recombine_rate=0.9)
         mutants = mutate_group(children=children, mutate_rate=0.02)
         evaluate_group(individuals=mutants, io_data=io_data)
         everyone = population + mutants
         rank_group(individuals=everyone)
         population = survivor_select(individuals=everyone, pop_size=pop_size)
         if best_fitness != population[0]["fitness"]:
+            counter_since_last_best = counter
             best_fitness = population[0]["fitness"]
             print(
                 "Iteration number",
@@ -556,6 +562,10 @@ def evolve(io_data: IOdata, pop_size: int = 200) -> Population:
                 "fitness",
                 population[0]["fitness"],
             )
+        if (counter - counter_since_last_best) > 10000:
+            return population
+        else:
+            continue
     return population
 
 
