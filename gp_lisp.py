@@ -564,8 +564,7 @@ def evolve(io_data: IOdata, pop_size: int = 200) -> Population:
             )
         if (counter - counter_since_last_best) > 10000:
             return population
-        else:
-            continue
+    print(population[0]["fitness"])
     return population
 
 
