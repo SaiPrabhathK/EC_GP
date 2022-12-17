@@ -542,11 +542,11 @@ def evolve(io_data: IOdata, pop_size: int = 200) -> Population:
     best_fitness = population[0]["fitness"]
     counter = 0
     counter_since_last_best = 0
-    while counter < 25000:
+    while counter < 10000:
         counter += 1
-        parents = parent_select(individuals=population, number=90)
-        children = recombine_group(parents=parents, recombine_rate=0.9)
-        mutants = mutate_group(children=children, mutate_rate=0.02)
+        parents = parent_select(individuals=population, number=80)
+        children = recombine_group(parents=parents, recombine_rate=0.8)
+        mutants = mutate_group(children=children, mutate_rate=0.25)
         evaluate_group(individuals=mutants, io_data=io_data)
         everyone = population + mutants
         rank_group(individuals=everyone)
@@ -562,7 +562,7 @@ def evolve(io_data: IOdata, pop_size: int = 200) -> Population:
                 "fitness",
                 population[0]["fitness"],
             )
-        if (counter - counter_since_last_best) > 10000:
+        if (counter - counter_since_last_best) > 6000:
             print(population[0]["fitness"])
             return population
     print(population[0]["fitness"])
