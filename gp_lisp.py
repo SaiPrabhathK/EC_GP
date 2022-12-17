@@ -495,9 +495,10 @@ def parent_select(individuals: Population, number: int) -> Population:
             continue
         fitness_list.append(x["fitness"])
         selected_individuals.append(x)
-    selected_parents = random.choices(
-        selected_individuals, weights=fitness_list, k=number
-    )
+    selected_parents = selected_individuals[:number]
+    #random.choices(
+     #   selected_individuals, weights=fitness_list, k=number
+    #)
     return selected_parents
 
 
@@ -536,11 +537,11 @@ def evolve(io_data: IOdata, pop_size: int = 200) -> Population:
     rank_group(individuals=population)
     best_fitness = population[0]["fitness"]
     counter = 0
-    while counter < 1000:
+    while counter < 10000:
         counter += 1
-        parents = parent_select(individuals=population, number=90)
-        children = recombine_group(parents=parents, recombine_rate=0.9)
-        mutants = mutate_group(children=children, mutate_rate=0.03)
+        parents = parent_select(individuals=population, number=80)
+        children = recombine_group(parents=parents, recombine_rate=0.8)
+        mutants = mutate_group(children=children, mutate_rate=0.02)
         evaluate_group(individuals=mutants, io_data=io_data)
         everyone = population + mutants
         rank_group(individuals=everyone)
