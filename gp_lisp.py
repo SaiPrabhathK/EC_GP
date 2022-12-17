@@ -562,7 +562,7 @@ def evolve(io_data: IOdata, pop_size: int = 200) -> Population:
                 "fitness",
                 population[0]["fitness"],
             )
-        if (counter - counter_since_last_best) > 6000:
+        if (counter - counter_since_last_best) > 4000:
             print(population[0]["fitness"])
             return population
     print(population[0]["fitness"])
