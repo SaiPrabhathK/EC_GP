@@ -498,10 +498,10 @@ def parent_select(individuals: Population, number: int) -> Population:
     total_fitness = sum(fitness_list)
     weights_list = []
     for each_fitness in fitness_list:
-        new_weight = (1 - (each_fitness/total_fitness))
+        new_weight = 1 - (each_fitness / total_fitness)
         weights_list.append(new_weight)
     selected_parents = random.choices(
-       selected_individuals, weights=weights_list, k=number
+        selected_individuals, weights=weights_list, k=number
     )
     return selected_parents
 
